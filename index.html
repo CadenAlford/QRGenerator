@@ -27,17 +27,22 @@
 <body>
   <h1>QR Code Generator</h1>
   <input type="text" id="url-input" placeholder="Enter URL" />
+  <br>
+  <input type="text" id="filename-input" placeholder="File name (without .png)" />
+  <br>
   <button onclick="generateQRCode()">Generate QR Code</button>
   <div id="qr-container">
     <canvas id="qr-code"></canvas>
     <br>
-    <a id="download-link" style="display:none;" download="qr_code.png">Download QR Code</a>
+    <a id="download-link" style="display:none;">Download QR Code</a>
   </div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
   <script>
     function generateQRCode() {
       const url = document.getElementById('url-input').value;
+      const filename = document.getElementById('filename-input').value.trim() || 'qr_code';
+
       const qr = new QRious({
         element: document.getElementById('qr-code'),
         value: url,
@@ -45,12 +50,13 @@
         level: 'H'
       });
 
-      // Create a download link
       const canvas = document.getElementById('qr-code');
       const dataUrl = canvas.toDataURL("image/png");
       const downloadLink = document.getElementById('download-link');
       downloadLink.href = dataUrl;
+      downloadLink.download = filename + ".png";
       downloadLink.style.display = 'inline';
+      downloadLink.textContent = `Download ${filename}.png`;
     }
   </script>
 </body>

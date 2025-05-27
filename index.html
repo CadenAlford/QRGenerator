@@ -30,9 +30,13 @@
   <br>
   <input type="text" id="filename-input" placeholder="File name (without .png)" />
   <br>
+  <label>
+    <input type="checkbox" id="include-logo" checked /> Include Logo
+  </label>
+  <br>
   <button onclick="generateQRCode()">Generate QR Code</button>
   <div id="qr-container">
-    <canvas id="qr-code"></canvas>
+    <canvas id="qr-code" width="250" height="250"></canvas>
     <br>
     <a id="download-link" style="display:none;">Download QR Code</a>
   </div>
@@ -42,15 +46,42 @@
     function generateQRCode() {
       const url = document.getElementById('url-input').value;
       const filename = document.getElementById('filename-input').value.trim() || 'qr_code';
+      const includeLogo = document.getElementById('include-logo').checked;
+      const canvas = document.getElementById('qr-code');
+      const context = canvas.getContext('2d');
 
+      // Clear canvas before drawing
+      context.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Create and draw QR code
       const qr = new QRious({
-        element: document.getElementById('qr-code'),
         value: url,
         size: 250,
         level: 'H'
       });
 
-      const canvas = document.getElementById('qr-code');
+      const qrImage = new Image();
+      qrImage.onload = () => {
+        context.drawImage(qrImage, 0, 0, 250, 250);
+
+        if (includeLogo) {
+          const logo = new Image();
+          logo.src = 'gallo.jpg';
+          logo.onload = () => {
+            const logoSize = 60;
+            const x = (canvas.width - logoSize) / 2;
+            const y = (canvas.height - logoSize) / 2;
+            context.drawImage(logo, x, y, logoSize, logoSize);
+            finalizeDownload(canvas, filename);
+          };
+        } else {
+          finalizeDownload(canvas, filename);
+        }
+      };
+      qrImage.src = qr.toDataURL();
+    }
+
+    function finalizeDownload(canvas, filename) {
       const dataUrl = canvas.toDataURL("image/png");
       const downloadLink = document.getElementById('download-link');
       downloadLink.href = dataUrl;

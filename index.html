@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QR Code Generator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 50px;
+    }
+    input[type="text"] {
+      width: 300px;
+      padding: 10px;
+      margin: 10px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+    }
+    #qr-container {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>QR Code Generator</h1>
+  <input type="text" id="url-input" placeholder="Enter URL" />
+  <button onclick="generateQRCode()">Generate QR Code</button>
+  <div id="qr-container">
+    <canvas id="qr-code"></canvas>
+    <br>
+    <a id="download-link" style="display:none;" download="qr_code.png">Download QR Code</a>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+  <script>
+    function generateQRCode() {
+      const url = document.getElementById('url-input').value;
+      const qr = new QRious({
+        element: document.getElementById('qr-code'),
+        value: url,
+        size: 250,
+        level: 'H'
+      });
+
+      // Create a download link
+      const canvas = document.getElementById('qr-code');
+      const dataUrl = canvas.toDataURL("image/png");
+      const downloadLink = document.getElementById('download-link');
+      downloadLink.href = dataUrl;
+      downloadLink.style.display = 'inline';
+    }
+  </script>
+</body>
+</html>
